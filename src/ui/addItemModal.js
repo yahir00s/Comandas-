@@ -10,7 +10,18 @@ export function renderAddItemModal(menuData, item, onConfirm, onClose) {
   modal.className = 'modal add-item-modal';
   
   const availableExtras = getExtrasForCategory(menuData, item.categoryId);
-  const hasVariants = item.variants && item.variants.length > 0;
+  const priceOptions = [];
+  if (item.price != null && !item.priceVariable) {
+    priceOptions.push({ label: `$${item.price}`, price: item.price, variant: null });
+  }
+  for (const variant of item.variants || []) {
+    priceOptions.push({
+      label: `${variant.name} — $${variant.price}`,
+      price: variant.price,
+      variant
+    });
+  }
+  const needsChoice = priceOptions.length > 1;
   
   modal.innerHTML = `
     <div class="modal-header">
@@ -21,15 +32,17 @@ export function renderAddItemModal(menuData, item, onConfirm, onClose) {
     <div class="modal-body">
       ${item.description ? `<p class="item-description">${item.description}</p>` : ''}
       
-      ${hasVariants ? `
+      ${needsChoice ? `
         <div class="form-group">
           <label>Presentación:</label>
           <select id="variant-select" class="form-control">
-            ${item.variants.map((v, i) => 
-              `<option value="${i}">${v.name} - $${v.price}</option>`
+            ${priceOptions.map((option, i) =>
+              `<option value="${i}">${option.label}</option>`
             ).join('')}
           </select>
         </div>
+      ` : priceOptions.length === 1 && priceOptions[0].variant ? `
+        <p class="item-description">${priceOptions[0].label}</p>
       ` : ''}
       
       ${item.priceVariable ? `
@@ -100,11 +113,16 @@ export function renderAddItemModal(menuData, item, onConfirm, onClose) {
       }));
     
     let selectedVariant = null;
-    if (hasVariants) {
-      const variantIndex = parseInt(modal.querySelector('#variant-select').value);
-      selectedVariant = item.variants[variantIndex];
+    let resolvedPrice = item.price;
+    if (needsChoice) {
+      const option = priceOptions[parseInt(modal.querySelector('#variant-select').value, 10)];
+      selectedVariant = option.variant;
+      resolvedPrice = option.price;
+    } else if (priceOptions.length === 1) {
+      selectedVariant = priceOptions[0].variant;
+      resolvedPrice = priceOptions[0].price;
     }
-    
+
     let customPrice = null;
     if (item.priceVariable) {
       const priceInput = modal.querySelector('#custom-price');
@@ -114,11 +132,11 @@ export function renderAddItemModal(menuData, item, onConfirm, onClose) {
         return;
       }
     }
-    
-    const itemWithVariant = { 
-      ...item, 
+
+    const itemWithVariant = {
+      ...item,
       selectedVariant,
-      price: selectedVariant ? selectedVariant.price : item.price
+      price: resolvedPrice
     };
     
     onConfirm(itemWithVariant, quantity, note, selectedExtras, customPrice);

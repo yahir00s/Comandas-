@@ -101,38 +101,33 @@ Edita variables CSS en `src/style.css`:
 
 ### ✅ Todas las Categorías Incluidas
 
-**Bebidas (7 categorías)**:
-- Coctelería: 16 items (mojitos, margaritas, cócteles con y sin litro)
-- Cócteles Italianos: 4 items
-- Destilados: 2 items (con precio variable)
-- Cócteles sin Alcohol: 4 items
-- Bebidas sin Alcohol: 6 items (sodas, limonadas)
-- Cervezas: 6 items (incluye micheladas)
-- Vino: 6 items (copas, botellas)
+**Bebidas**:
+- Coctelería: 16
+- Cócteles Italianos: 8
+- Destilados: 2
+- Cócteles sin alcohol: 4
+- Bebidas sin alcohol: 6
+- Cervezas: 6
+- Vino: 6
 
-**Comida (6 categorías)**:
-- Pastas: 5 tipos (marinara, pesto, arrabbiata, pérez rosa, carbonara)
-- Panuzzos: 3 tipos (albóndigas, boloñesa, jamón)
-- Postres: 3 tipos (panacota, crème brûlée, buñuelos)
-- Pizzas: 19 tipos (desde margherita hasta tres carnes)
-- Entradas: 8 items (nudos, bruschetta, papas, etc.)
-- Especialidades Gallo: 7 items
-- Ensaladas: 3 tipos (césar, mix, arúgula)
+**Comida**:
+- Pastas: 5 (Marinara, Pesto, Arrabbiata, Alfredo, Carbonara)
+- Panuzzos: 3 (Albóndigas, Pollo a la Parmesana, Jamón)
+- Postres: 3
+- Pizzas: 17
+- Entradas: 8
+- Especialidades Gallo: 5 (Nudos de Ajo, Stromboli, Papas Poutine, Hot Dog Bratwurst, Hamburguesa Clásica)
+- Ensaladas: 2 (César, Mixta)
 
 **Extras**:
 - Pizza: Vegetal ($15), Queso ($35), Proteína ($35)
-- Pasta/Ensalada: Pollo ($55), Camarones ($60), Albóndigas ($55)
+- Pasta y ensalada: Pollo ($55), Camarones ($60), Albóndigas ($55)
 
-### ⚠️ Items con Consideraciones Especiales
+### Precios especiales
 
-**Precio Variable** (requieren entrada manual):
-- Vampiro (precio según existencia)
-- Destilados: Todas y Mezcales
-
-**Items con Variantes**:
-- Bebidas con Copa/Vaso y Litro
-- Vinos con Copa y Botella
-- Algunas pizzas/pastas con tamaños (si aplica)
+- Tuxcas y Mezcales: precio según existencia (se captura a mano)
+- Vampiro: $100, o Litro $160
+- Vampiro S/A: solo Litro $120
 
 ## 🎯 Características Implementadas
 

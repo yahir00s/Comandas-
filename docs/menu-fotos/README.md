@@ -1,44 +1,51 @@
-# Fotos del Menú - Gallo Pizzero
+# Menú de referencia — Gallo Pizzero
 
-Este directorio contiene las fotos del menú impreso del restaurante, utilizadas como referencia para extraer los productos y precios en `src/data/menu.js`.
+Los nombres, precios y variantes de litro viven en `src/data/menu.js`.
+La lista coincide con la transcripción verificada de las fotos del menú impreso.
 
-## Secciones del Menú
+## Conteos
 
-El menú está organizado en las siguientes categorías:
+| Categoría | Productos |
+| --- | ---: |
+| Coctelería | 16 |
+| Cócteles Italianos | 8 |
+| Destilados | 2 |
+| Cócteles sin alcohol | 4 |
+| Bebidas sin alcohol | 6 |
+| Cervezas | 6 |
+| Vino | 6 |
+| Pastas | 5 |
+| Panuzzos | 3 |
+| Postres | 3 |
+| Pizzas | 17 |
+| Entradas | 8 |
+| Especialidades Gallo | 5 |
+| Ensaladas | 2 |
+| **Total** | **91** |
 
-### Bebidas
-- **Coctelería**: Mojitos, margaritas, cócteles clásicos (muchos disponibles por litro)
-- **Cócteles Italianos**: Limonadas y bebidas italianas especiales
-- **Destilados**: Tequila, mezcales, licores
-- **Cócteles sin Alcohol**: Opciones sin alcohol
-- **Bebidas sin Alcohol**: Sodas italianas, limonadas, aguas frescas
-- **Cervezas**: Corona, Victoria, micheladas
-- **Vino**: Copas y botellas, sangría, clericot
+## Variante Litro
 
-### Comida
-- **Pastas**: Marinara, pesto, arrabbiata, carbonara, pérez rosa
-- **Panuzzos**: Pan pizza relleno (albóndigas, boloñesa, jamón)
-- **Postres**: Panacota, crème brûlée, buñuelos de viento
-- **Pizzas**: Variedad de pizzas artesanales (margherita, pepperoni, hawaiana, gorgonzola, etc.)
-- **Entradas**: Nudos de pan, bruschetta, papas, ensalada caprese
-- **Especialidades Gallo**: Items especiales de la casa
-- **Ensaladas**: César, mix, arúgula
+Estas bebidas tienen precio de servicio y precio de litro:
 
-### Extras
-- **Para Pizzas**: Vegetal ($15), Queso ($35), Proteína ($35)
-- **Para Pastas/Ensaladas**: Pollo ($55), Camarones ($60), Albóndigas ($55)
+- Mojito Mandarina, Mojito Clásico — $90 | Litro $160
+- Mojito de Frutos Rojos — $100 | Litro $160
+- Cantarito de Mezcal o Tequila — $110 | Litro $160
+- Vampiro — $100 | Litro $160
+- Mojitos S/A — $60 | Litro $120
+- Vampiro S/A — solo Litro $120
+- Soda Italiana de Fresa y de Frutos Rojos — $60 | Litro $120
+- Limonada Italiana — $70 | Litro $140
+- Limonada o Naranjada, Agua Fresca del Día — $45 | Litro $90
 
-## Notas sobre Precios
+## Precio manual
 
-Algunos items tienen precios variables marcados como "precio según existencia":
-- Vampiro (coctelería)
-- Destilados (tequila, mezcales)
+- Tuxcas y Mezcales — precio según existencia
 
-Estos requieren que el usuario ingrese el precio manualmente al agregarlos a una comanda.
+## Extras
 
-## Actualizaciones
+- Pizzas: Vegetal $15, Queso $35, Proteína $35
+- Pastas y ensaladas: Pollo $55, Camarones $60, Albóndigas $55
 
-Si el menú cambia, actualiza:
-1. Las fotos en este directorio (si es necesario)
-2. El archivo `src/data/menu.js` con los nuevos items/precios
-3. Este README con las notas relevantes
+La única nota de preparación guardada en los datos es la de Boneless
+(salsas BBQ de la casa, Piña Habanero y BBQ Chiltepín). El resto de los
+productos no lleva descripción inventada.

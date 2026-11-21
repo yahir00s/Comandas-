@@ -2,6 +2,18 @@
 
 import { searchItems, filterByCategory } from '../search.js';
 
+function formatPrice(item) {
+  if (item.priceVariable) {
+    return '<span class="price-variable">Precio según existencia</span>';
+  }
+  const parts = [];
+  if (item.price != null) parts.push(`$${item.price}`);
+  if (item.variants?.length) {
+    parts.push(...item.variants.map(v => `${v.name} $${v.price}`));
+  }
+  return `<span class="price">${parts.join(' · ')}</span>`;
+}
+
 export function renderMenuView(menuData, recentItemIds, onSelectItem, onClose) {
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
@@ -78,11 +90,7 @@ export function renderMenuView(menuData, recentItemIds, onSelectItem, onClose) {
       const itemEl = document.createElement('div');
       itemEl.className = 'menu-item';
       
-      const priceDisplay = item.priceVariable 
-        ? '<span class="price-variable">Precio según existencia</span>'
-        : item.variants && item.variants.length > 0
-          ? `<span class="price-variants">${item.variants.map(v => `${v.name}: $${v.price}`).join(' / ')}</span>`
-          : `<span class="price">$${item.price}</span>`;
+      const priceDisplay = formatPrice(item);
       
       itemEl.innerHTML = `
         <div class="menu-item-info">

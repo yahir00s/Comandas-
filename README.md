@@ -85,20 +85,20 @@ El menú completo está definido en `src/data/menu.js` e incluye:
 ### Bebidas
 - Coctelería (mojitos, margaritas, cócteles)
 - Cócteles Italianos
-- Destilados (tequila, mezcales)
+- Destilados
 - Cócteles sin Alcohol
 - Bebidas sin Alcohol
 - Cervezas
 - Vino
 
 ### Comida
-- Pastas (5 tipos)
-- Panuzzos (3 tipos)
-- Postres (3 tipos)
-- Pizzas (19 tipos)
-- Entradas (8 tipos)
-- Especialidades Gallo
-- Ensaladas (3 tipos)
+- Pastas (5)
+- Panuzzos (3)
+- Postres (3)
+- Pizzas (17)
+- Entradas (8)
+- Especialidades Gallo (5)
+- Ensaladas (2: César y Mixta)
 
 ### Extras
 - Para Pizzas: Vegetal, Queso, Proteína
