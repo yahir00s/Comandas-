@@ -1,160 +1,51 @@
-# 🍕 Gallo Pizzero - Sistema de Comandas
+# Gallo Pizzero · Comandas
 
-Sistema simple de toma de comandas para el restaurante Gallo Pizzero. Funciona completamente en el navegador sin necesidad de backend, guardando toda la información localmente.
+App para anotar lo que pide cada mesa. Está pensada para usarse en el celular. Todo se guarda en el navegador (localStorage): no hay servidor y no se envía nada.
 
-## 🚀 Características
+App publicada: https://yahir00s.github.io/Comandas-/
 
-- ✅ **Gestión de Comandas**: Crea, visualiza y elimina comandas por mesa/cliente
-- 📝 **Agregar Items**: Busca productos del menú, selecciona cantidad, variantes, extras y notas personalizadas
-- 🔍 **Búsqueda Inteligente**: Búsqueda sin acentos por nombre o descripción + filtro por categoría
-- ⚡ **Items Frecuentes**: Lista de productos pedidos recientemente para acceso rápido
-- ➕ **Re-agregar Rápido**: Botón +1 en items de la comanda para repetir
-- 💾 **Persistencia Local**: Todo se guarda en localStorage del navegador
-- 📊 **Estados**: Marca comandas como pendiente/entregada/pagada
-- 🖨️ **Impresión**: Vista de impresión optimizada para cada comanda
-- 📱 **Responsive**: Funciona en computadora, tablet y móvil
+## Cómo se usa
 
-## 🛠️ Tecnología
+1. **Lista de comandas.** Toca **+ Nueva comanda**, escribe mesa o nombre (la nota es opcional) y se abre directo la pantalla para agregar productos.
+2. **Agregar productos.** Arriba la búsqueda (sin acentos), abajo las categorías en bloques (Bebidas y Comida). Si ya pediste algo antes, aparecen chips de **Frecuentes** que agregan con un toque.
+3. Dentro de una categoría cada producto muestra su precio como botón. Un toque agrega uno. Si tiene Litro, hay un botón por precio. La insignia indica cuántos llevas de ese producto.
+4. **Ver comanda** (barra inferior) abre solo esa comanda: **−** / **+** (otra vez), **Nota / extras**, estado (Pendiente, Entregada, Pagada), total, imprimir y eliminar.
+5. Al volver, la lista muestra una tarjeta por comanda con hora, tiempo transcurrido, total y estado. Las pagadas quedan al final.
+6. El botón atrás del celular regresa a la pantalla anterior.
 
-- **Vite** - Build tool moderno y rápido
-- **Vanilla JavaScript** con módulos ES6 - Sin frameworks, código limpio y modular
-- **LocalStorage** - Persistencia de datos en el navegador
-- **CSS moderno** - Diseño responsive y adaptable
+**Borrar todas las comandas** está al final de la lista y pide confirmación.
 
-## 📁 Estructura del Proyecto
+## Menú
+
+Los productos y precios están en `src/data/menu.js` (91 productos, ver `docs/menu-fotos/`). Para cambiar un precio o agregar un producto edita ese archivo.
+
+- Precio de vaso y de litro: `variants: [{ name: 'Litro', price: 160 }]`.
+- Precio según existencia: `priceVariable: true` (pide el precio al agregar).
+- Extras de pizzas, pastas y ensaladas: sección `extras` del mismo archivo.
+
+## Estructura
 
 ```
-/
-├── src/
-│   ├── data/
-│   │   └── menu.js          # Datos del menú (fácil de editar)
-│   ├── ui/
-│   │   ├── header.js        # Componente del encabezado
-│   │   ├── comandaList.js   # Lista de comandas
-│   │   ├── comandaDetail.js # Detalle de comanda
-│   │   ├── menuView.js      # Vista de selección de menú
-│   │   ├── addItemModal.js  # Modal para agregar items
-│   │   └── newComandaModal.js # Modal para nueva comanda
-│   ├── store.js             # Gestión de localStorage
-│   ├── comandas.js          # Lógica de comandas
-│   ├── search.js            # Búsqueda y filtros
-│   ├── main.js              # Aplicación principal
-│   └── style.css            # Estilos
-├── docs/
-│   └── menu-fotos/          # Fotos del menú de referencia
-├── index.html
-├── vite.config.js
-└── package.json
+src/
+  data/menu.js     menú y precios
+  store.js         localStorage (comandas y frecuentes)
+  comandas.js      reglas: agregar, cantidades, estado, totales
+  search.js        búsqueda sin acentos, opciones de precio, extras
+  main.js          navegación entre pantallas
+  ui/              listView, detailView, addView, sheets, dom
+  style.css
 ```
 
-## 🏃 Desarrollo Local
+## Desarrollo
 
 ```bash
-# Instalar dependencias
 npm install
-
-# Iniciar servidor de desarrollo
-npm run dev
-
-# Construir para producción
-npm run build
-
-# Vista previa del build
-npm run preview
+npm run dev      # servidor local
+npm run build    # genera dist/
 ```
 
-## 🌐 Despliegue en GitHub Pages
+## Publicación
 
-El proyecto incluye un workflow de GitHub Actions que despliega automáticamente a GitHub Pages en cada push a `main`.
+Cada push a `main` ejecuta `.github/workflows/deploy.yml` y publica en GitHub Pages. En el repositorio, **Settings → Pages → Source** debe ser **GitHub Actions**.
 
-### Configuración Requerida
-
-1. Ve a **Settings** → **Pages** en el repositorio
-2. En **Source**, selecciona: **GitHub Actions**
-3. El workflow se ejecutará automáticamente en el próximo push
-
-La app estará disponible en:
-```
-https://yahir00s.github.io/Comandas-/
-```
-
-## 📋 Menú
-
-El menú completo está definido en `src/data/menu.js` e incluye:
-
-### Bebidas
-- Coctelería (mojitos, margaritas, cócteles)
-- Cócteles Italianos
-- Destilados
-- Cócteles sin Alcohol
-- Bebidas sin Alcohol
-- Cervezas
-- Vino
-
-### Comida
-- Pastas (5)
-- Panuzzos (3)
-- Postres (3)
-- Pizzas (17)
-- Entradas (8)
-- Especialidades Gallo (5)
-- Ensaladas (2: César y Mixta)
-
-### Extras
-- Para Pizzas: Vegetal, Queso, Proteína
-- Para Pastas/Ensaladas: Pollo, Camarones, Albóndigas
-
-## 📝 Uso
-
-1. **Crear Comanda**: Click en "Nueva Comanda", ingresa mesa/nombre
-2. **Agregar Items**: Click en "Agregar Item", busca/selecciona productos
-3. **Personalizar**: Selecciona cantidad, variante, extras y notas
-4. **Gestionar**: Cambia estados (pendiente/entregada/pagada)
-5. **Imprimir**: Click en 🖨️ para vista de impresión
-6. **Eliminar**: Elimina comandas individuales o todas a la vez
-
-## ⚙️ Personalización
-
-### Actualizar el Menú
-
-Edita `src/data/menu.js` para:
-- Agregar/eliminar categorías
-- Agregar/eliminar items
-- Actualizar precios
-- Modificar descripciones
-
-### Cambiar Colores
-
-Edita las variables CSS en `src/style.css`:
-```css
-:root {
-  --primary-color: #d32f2f;
-  --secondary-color: #ff9800;
-  /* ... más colores */
-}
-```
-
-## 🔒 Datos
-
-- **Almacenamiento**: LocalStorage del navegador
-- **Persistencia**: Los datos persisten entre sesiones
-- **Privacidad**: No se envía información a ningún servidor
-- **Backup**: Para respaldar, exporta desde localStorage o haz capturas
-
-⚠️ **Importante**: Los datos solo existen en el navegador donde se crean. Si cambias de navegador o borras el caché, se pierden.
-
-## 📄 Licencia
-
-Este proyecto fue creado específicamente para Gallo Pizzero.
-
-## 🤝 Contribuciones
-
-Para mejoras o cambios:
-1. Edita los archivos necesarios
-2. Prueba localmente con `npm run dev`
-3. Construye con `npm run build`
-4. Haz commit y push para que se despliegue automáticamente
-
----
-
-Desarrollado con ❤️ para Gallo Pizzero
+Los datos viven solo en el navegador donde se capturan: no se comparten entre dispositivos y se pierden si se borra el almacenamiento del sitio.

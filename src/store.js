@@ -1,53 +1,33 @@
-// localStorage management for comandas
+// Persistencia en localStorage.
 
-const STORAGE_KEY = 'gallo-pizzero-comandas';
-const RECENT_ITEMS_KEY = 'gallo-pizzero-recent';
-const MAX_RECENT_ITEMS = 10;
+const COMANDAS_KEY = 'gallo-comandas-v2';
+const FRECUENTES_KEY = 'gallo-frecuentes-v2';
 
-export function loadComandas() {
+function read(key, fallback) {
   try {
-    const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
-  } catch (error) {
-    console.error('Error loading comandas:', error);
-    return [];
+    return JSON.parse(localStorage.getItem(key)) ?? fallback;
+  } catch {
+    return fallback;
   }
 }
 
-export function saveComandas(comandas) {
+function write(key, value) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(comandas));
+    localStorage.setItem(key, JSON.stringify(value));
   } catch (error) {
-    console.error('Error saving comandas:', error);
+    console.error('No se pudo guardar', error);
   }
 }
 
-export function deleteAllComandas() {
-  try {
-    localStorage.removeItem(STORAGE_KEY);
-  } catch (error) {
-    console.error('Error deleting comandas:', error);
-  }
-}
+export const loadComandas = () => read(COMANDAS_KEY, []);
+export const saveComandas = (list) => write(COMANDAS_KEY, list);
+export const clearComandas = () => localStorage.removeItem(COMANDAS_KEY);
 
-export function loadRecentItems() {
-  try {
-    const data = localStorage.getItem(RECENT_ITEMS_KEY);
-    return data ? JSON.parse(data) : [];
-  } catch (error) {
-    console.error('Error loading recent items:', error);
-    return [];
-  }
-}
+// Frecuentes: { "productoId|opcion": { n: veces, t: última vez } }
+export const loadFrecuentes = () => read(FRECUENTES_KEY, {});
 
-export function addRecentItem(itemId) {
-  try {
-    let recent = loadRecentItems();
-    recent = recent.filter(id => id !== itemId);
-    recent.unshift(itemId);
-    recent = recent.slice(0, MAX_RECENT_ITEMS);
-    localStorage.setItem(RECENT_ITEMS_KEY, JSON.stringify(recent));
-  } catch (error) {
-    console.error('Error adding recent item:', error);
-  }
+export function bumpFrecuente(key) {
+  const data = loadFrecuentes();
+  data[key] = { n: (data[key]?.n || 0) + 1, t: Date.now() };
+  write(FRECUENTES_KEY, data);
 }

@@ -2,12 +2,14 @@
 // Fuente: transcripción verificada de las fotos del menú impreso.
 // Las bebidas con precio de vaso y de litro usan `variants`.
 // `priceVariable` pide el precio al agregar el producto.
+// `group` agrupa las categorías en la pantalla de agregar (bebidas o comida).
 
 export const menuData = {
   categories: [
     {
       id: 'cocteleria',
       name: 'Coctelería',
+      group: 'bebidas',
       items: [
         { id: 'coc-mojito-mandarina', name: 'Mojito Mandarina', price: 90, variants: [{ name: 'Litro', price: 160 }] },
         { id: 'coc-mojito-clasico', name: 'Mojito Clásico', price: 90, variants: [{ name: 'Litro', price: 160 }] },
@@ -30,6 +32,7 @@ export const menuData = {
     {
       id: 'cocteles-italianos',
       name: 'Cócteles Italianos',
+      group: 'bebidas',
       items: [
         { id: 'ci-negroni', name: 'Negroni', price: 120 },
         { id: 'ci-milano', name: 'Milano', price: 120 },
@@ -44,6 +47,7 @@ export const menuData = {
     {
       id: 'destilados',
       name: 'Destilados',
+      group: 'bebidas',
       items: [
         { id: 'des-tuxca-casa', name: 'Tuxca de la casa', price: 65 },
         { id: 'des-tuxcas-mezcales', name: 'Tuxcas y Mezcales', price: null, priceVariable: true }
@@ -52,6 +56,7 @@ export const menuData = {
     {
       id: 'cocteles-sin-alcohol',
       name: 'Cócteles sin alcohol',
+      group: 'bebidas',
       items: [
         { id: 'csa-toronja-spritz', name: 'Toronja Spritz', price: 110 },
         { id: 'csa-copa-espumoso', name: 'Copa de Vino Espumoso S/A', price: 80 },
@@ -67,6 +72,7 @@ export const menuData = {
     {
       id: 'bebidas-sin-alcohol',
       name: 'Bebidas sin alcohol',
+      group: 'bebidas',
       items: [
         { id: 'bsa-soda-fresa', name: 'Soda Italiana de Fresa', price: 60, variants: [{ name: 'Litro', price: 120 }] },
         { id: 'bsa-soda-frutos', name: 'Soda Italiana de Frutos Rojos', price: 60, variants: [{ name: 'Litro', price: 120 }] },
@@ -79,6 +85,7 @@ export const menuData = {
     {
       id: 'cervezas',
       name: 'Cervezas',
+      group: 'bebidas',
       items: [
         { id: 'cer-corona-victoria', name: 'Corona o Victoria', price: 45 },
         { id: 'cer-corona-familiar', name: 'Corona Familiar', price: 100 },
@@ -91,6 +98,7 @@ export const menuData = {
     {
       id: 'vino',
       name: 'Vino',
+      group: 'bebidas',
       items: [
         { id: 'vin-copa-cabernet', name: 'Copa Cabernet Sauvignon', price: 80 },
         { id: 'vin-copa-blanc', name: 'Copa Sauvignon Blanc', price: 80 },
@@ -103,6 +111,7 @@ export const menuData = {
     {
       id: 'pastas',
       name: 'Pastas',
+      group: 'comida',
       items: [
         { id: 'pas-marinara', name: 'Marinara', price: 160 },
         { id: 'pas-pesto', name: 'Pesto', price: 180 },
@@ -114,6 +123,7 @@ export const menuData = {
     {
       id: 'panuzzos',
       name: 'Panuzzos',
+      group: 'comida',
       items: [
         { id: 'pan-albondigas', name: 'Albóndigas', price: 200 },
         { id: 'pan-pollo-parmesana', name: 'Pollo a la Parmesana', price: 200 },
@@ -123,6 +133,7 @@ export const menuData = {
     {
       id: 'postres',
       name: 'Postres',
+      group: 'comida',
       items: [
         { id: 'pos-panacota', name: 'Panacota', price: 80 },
         { id: 'pos-creme-brulee', name: 'Crème Brûlée', price: 80 },
@@ -132,6 +143,7 @@ export const menuData = {
     {
       id: 'pizzas',
       name: 'Pizzas',
+      group: 'comida',
       items: [
         { id: 'piz-margherita', name: 'Margherita', price: 180 },
         { id: 'piz-marinara', name: 'Marinara', price: 180 },
@@ -155,6 +167,7 @@ export const menuData = {
     {
       id: 'entradas',
       name: 'Entradas',
+      group: 'comida',
       items: [
         { id: 'ent-bruselas', name: 'Bruselas', price: 100 },
         { id: 'ent-carpaccio-betabel', name: 'Carpaccio de Betabel', price: 110 },
@@ -174,6 +187,7 @@ export const menuData = {
     {
       id: 'especialidades',
       name: 'Especialidades Gallo',
+      group: 'comida',
       items: [
         { id: 'esp-nudos-ajo', name: 'Nudos de Ajo', price: 100 },
         { id: 'esp-stromboli', name: 'Stromboli', price: 100 },
@@ -185,6 +199,7 @@ export const menuData = {
     {
       id: 'ensaladas',
       name: 'Ensaladas',
+      group: 'comida',
       items: [
         { id: 'ens-cesar', name: 'César', price: 120 },
         { id: 'ens-mixta', name: 'Mixta', price: 120 }

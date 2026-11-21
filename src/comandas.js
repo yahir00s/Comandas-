@@ -1,116 +1,75 @@
-// Comanda management logic
+// Estado y reglas de las comandas.
 
-import { loadComandas, saveComandas, addRecentItem } from './store.js';
+import { loadComandas, saveComandas, clearComandas } from './store.js';
+
+export const STATUS = { pendiente: 'Pendiente', entregada: 'Entregada', pagada: 'Pagada' };
 
 let comandas = [];
-let currentComandaId = null;
+const save = () => saveComandas(comandas);
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
-export function initComandas() {
-  comandas = loadComandas();
-}
+export const initComandas = () => { comandas = loadComandas(); };
+export const getComandas = () => comandas;
+export const getComanda = (id) => comandas.find((c) => c.id === id);
 
-export function getComandas() {
-  return comandas;
-}
+export const label = (c) => (/^\d+$/.test(c.name) ? `Mesa ${c.name}` : c.name);
+export const lineTotal = (l) => (l.price + l.extras.reduce((s, e) => s + e.price, 0)) * l.qty;
+export const comandaTotal = (c) => c.items.reduce((s, l) => s + lineTotal(l), 0);
+export const unitCount = (c) => c.items.reduce((s, l) => s + l.qty, 0);
+export const countOf = (c, itemId, optKey) =>
+  c.items
+    .filter((l) => l.itemId === itemId && (l.variant || 'base') === optKey)
+    .reduce((s, l) => s + l.qty, 0);
 
-export function getCurrentComandaId() {
-  return currentComandaId;
-}
-
-export function setCurrentComandaId(id) {
-  currentComandaId = id;
-}
-
-export function createComanda(tableNumber, note = '') {
-  const id = Date.now().toString();
-  const comanda = {
-    id,
-    tableNumber,
-    note,
-    items: [],
-    createdAt: new Date().toISOString(),
-    status: 'pendiente', // pendiente, entregada, pagada
-    total: 0
-  };
+export function createComanda(name, note = '') {
+  const comanda = { id: uid(), name, note, status: 'pendiente', createdAt: new Date().toISOString(), items: [] };
   comandas.push(comanda);
-  saveComandas(comandas);
-  return id;
+  save();
+  return comanda.id;
 }
 
-export function getComanda(id) {
-  return comandas.find(c => c.id === id);
+export function addLine(comandaId, item, option, manualPrice = null) {
+  const c = getComanda(comandaId);
+  const price = manualPrice ?? option.price;
+  const variant = option.variant?.name ?? null;
+  const same = c.items.find(
+    (l) => l.itemId === item.id && l.variant === variant && l.price === price && !l.note && !l.extras.length
+  );
+  if (same) same.qty += 1;
+  else c.items.push({ id: uid(), itemId: item.id, name: item.name, variant, price, qty: 1, note: '', extras: [] });
+  save();
 }
 
-export function addItemToComanda(comandaId, menuItem, quantity = 1, note = '', extras = [], customPrice = null) {
-  const comanda = getComanda(comandaId);
-  if (!comanda) return;
-
-  const itemId = Date.now().toString() + Math.random();
-  const basePrice = customPrice !== null ? customPrice : (menuItem.price || 0);
-  const extrasTotal = extras.reduce((sum, extra) => sum + extra.price, 0);
-  const itemTotal = (basePrice + extrasTotal) * quantity;
-
-  const item = {
-    id: itemId,
-    menuItemId: menuItem.id,
-    name: menuItem.name,
-    basePrice,
-    quantity,
-    note,
-    extras,
-    variant: menuItem.selectedVariant || null,
-    total: itemTotal,
-    addedAt: new Date().toISOString()
-  };
-
-  comanda.items.push(item);
-  updateComandaTotal(comandaId);
-  saveComandas(comandas);
-  addRecentItem(menuItem.id);
+export function changeQty(comandaId, lineId, delta) {
+  const c = getComanda(comandaId);
+  const line = c.items.find((l) => l.id === lineId);
+  line.qty += delta;
+  if (line.qty < 1) c.items = c.items.filter((l) => l !== line);
+  save();
 }
 
-export function incrementItemQuantity(comandaId, itemId) {
-  const comanda = getComanda(comandaId);
-  if (!comanda) return;
-
-  const item = comanda.items.find(i => i.id === itemId);
-  if (item) {
-    item.quantity++;
-    const extrasTotal = item.extras.reduce((sum, extra) => sum + extra.price, 0);
-    item.total = (item.basePrice + extrasTotal) * item.quantity;
-    updateComandaTotal(comandaId);
-    saveComandas(comandas);
-  }
+export function updateLine(comandaId, lineId, patch) {
+  Object.assign(getComanda(comandaId).items.find((l) => l.id === lineId), patch);
+  save();
 }
 
-export function removeItemFromComanda(comandaId, itemId) {
-  const comanda = getComanda(comandaId);
-  if (!comanda) return;
-
-  comanda.items = comanda.items.filter(i => i.id !== itemId);
-  updateComandaTotal(comandaId);
-  saveComandas(comandas);
+export function removeLine(comandaId, lineId) {
+  const c = getComanda(comandaId);
+  c.items = c.items.filter((l) => l.id !== lineId);
+  save();
 }
 
-export function updateComandaStatus(comandaId, status) {
-  const comanda = getComanda(comandaId);
-  if (!comanda) return;
-
-  comanda.status = status;
-  saveComandas(comandas);
+export function setStatus(comandaId, status) {
+  getComanda(comandaId).status = status;
+  save();
 }
 
 export function deleteComanda(id) {
-  comandas = comandas.filter(c => c.id !== id);
-  saveComandas(comandas);
-  if (currentComandaId === id) {
-    currentComandaId = null;
-  }
+  comandas = comandas.filter((c) => c.id !== id);
+  save();
 }
 
-export function updateComandaTotal(comandaId) {
-  const comanda = getComanda(comandaId);
-  if (!comanda) return;
-
-  comanda.total = comanda.items.reduce((sum, item) => sum + item.total, 0);
+export function deleteAll() {
+  comandas = [];
+  clearComandas();
 }
