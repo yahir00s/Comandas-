@@ -27,24 +27,34 @@ export function createComanda(name, note = '') {
   return comanda.id;
 }
 
+// Una línea ya llevada a la mesa nunca vuelve a pendiente: lo nuevo va en otra línea.
+const sameOrder = (a, b) =>
+  a.itemId === b.itemId && a.variant === b.variant && (a.note || '') === (b.note || '') &&
+  (a.extras || []).map((x) => x.id).sort().join() === (b.extras || []).map((x) => x.id).sort().join();
+
+const addPending = (c, line, fields) => {
+  const next = { ...line, id: uid(), served: false, ...fields };
+  const pending = c.items.find((l) => !l.served && sameOrder(l, next));
+  if (pending) pending.qty += next.qty;
+  else c.items.splice(c.items.indexOf(line) + 1, 0, next);
+};
+
 export function addLine(comandaId, item, option) {
   const c = getComanda(comandaId);
   const variant = option.variant?.name ?? null;
-  const same = c.items.find((l) => l.itemId === item.id && l.variant === variant && !l.note && !l.extras.length);
-  if (same) {
-    same.qty += 1;
-    same.served = false;
-  } else {
-    c.items.push({ id: uid(), itemId: item.id, name: item.name, variant, qty: 1, note: '', extras: [], served: false });
-  }
+  const same = c.items.find(
+    (l) => !l.served && l.itemId === item.id && l.variant === variant && !l.note && !l.extras.length,
+  );
+  if (same) same.qty += 1;
+  else c.items.push({ id: uid(), itemId: item.id, name: item.name, variant, qty: 1, note: '', extras: [], served: false });
   save();
 }
 
 export function changeQty(comandaId, lineId, delta) {
   const c = getComanda(comandaId);
   const line = findLine(c, lineId);
-  line.qty += delta;
-  if (delta > 0) line.served = false;
+  if (delta > 0 && line.served) addPending(c, line, { qty: delta });
+  else line.qty += delta;
   if (line.qty < 1) c.items = c.items.filter((l) => l !== line);
   save();
 }
@@ -52,8 +62,11 @@ export function changeQty(comandaId, lineId, delta) {
 export function updateLine(comandaId, lineId, patch) {
   const c = getComanda(comandaId);
   const line = findLine(c, lineId);
-  if (patch.qty > line.qty) line.served = false;
-  Object.assign(line, patch);
+  if (line.served && patch.qty > line.qty) {
+    addPending(c, line, { ...patch, qty: patch.qty - line.qty });
+  } else {
+    Object.assign(line, patch);
+  }
   save();
 }
 
