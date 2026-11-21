@@ -1,47 +1,34 @@
-// Search and filter functionality
+// Consultas sobre el menú: búsqueda sin acentos, opciones de precio y extras.
 
-function removeAccents(str) {
-  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-}
+import { menuData } from './data/menu.js';
 
-export function searchItems(items, query) {
-  if (!query) return items;
-  
-  const normalizedQuery = removeAccents(query.toLowerCase());
-  
-  return items.filter(item => {
-    const normalizedName = removeAccents(item.name.toLowerCase());
-    const normalizedDesc = item.description 
-      ? removeAccents(item.description.toLowerCase()) 
-      : '';
-    
-    return normalizedName.includes(normalizedQuery) || 
-           normalizedDesc.includes(normalizedQuery);
+const normalize = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
+export const categories = menuData.categories;
+export const allItems = categories.flatMap((c) =>
+  c.items.map((item) => ({ ...item, categoryId: c.id, category: c.name }))
+);
+export const itemById = (id) => allItems.find((i) => i.id === id);
+
+export function searchItems(query) {
+  const words = normalize(query).split(/\s+/).filter(Boolean);
+  if (!words.length) return [];
+  return allItems.filter((item) => {
+    const text = normalize(`${item.name} ${item.description || ''} ${item.category}`);
+    return words.every((w) => text.includes(w));
   });
 }
 
-export function filterByCategory(menuData, categoryId) {
-  if (!categoryId || categoryId === 'todos') {
-    return menuData.categories.flatMap(cat => 
-      cat.items.map(item => ({ ...item, category: cat.name, categoryId: cat.id }))
-    );
+// Cada opción es un botón de un toque: precio base, variante Litro o precio manual.
+export function priceOptions(item) {
+  if (item.priceVariable) return [{ key: 'manual', price: null, variant: null }];
+  const options = [];
+  if (item.price != null) options.push({ key: 'base', price: item.price, variant: null });
+  for (const variant of item.variants || []) {
+    options.push({ key: variant.name, price: variant.price, variant });
   }
-  
-  const category = menuData.categories.find(cat => cat.id === categoryId);
-  return category 
-    ? category.items.map(item => ({ ...item, category: category.name, categoryId: category.id }))
-    : [];
+  return options;
 }
 
-export function getExtrasForCategory(menuData, categoryId) {
-  if (categoryId.includes('pizza')) {
-    return menuData.extras.pizza || [];
-  }
-  if (categoryId.includes('pasta')) {
-    return menuData.extras.pasta || [];
-  }
-  if (categoryId.includes('ensalada')) {
-    return menuData.extras.ensalada || [];
-  }
-  return [];
-}
+const EXTRAS_BY_CATEGORY = { pizzas: 'pizza', pastas: 'pasta', ensaladas: 'ensalada' };
+export const extrasFor = (categoryId) => menuData.extras[EXTRAS_BY_CATEGORY[categoryId]] || [];
