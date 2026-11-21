@@ -1,28 +1,31 @@
 // Pantalla 1: lista de comandas.
 
-import { STATUS, label, comandaTotal, unitCount } from '../comandas.js';
-import { el, esc, money, timeLabel, ago } from './dom.js';
+import { label, unitCount, pendingCount } from '../comandas.js';
+import { el, esc, timeLabel, ago } from './dom.js';
+
+function progress(c) {
+  if (!c.items.length) return { key: 'vacia', text: 'Vacía' };
+  const pending = pendingCount(c);
+  return pending ? { key: 'faltan', text: `Faltan ${pending}` } : { key: 'listo', text: 'Todo en mesa' };
+}
 
 function card(c) {
   const units = unitCount(c);
+  const state = progress(c);
   return `
-    <button class="card status-${c.status}" data-open="${c.id}">
+    <button class="card state-${state.key}" data-open="${c.id}">
       <div class="card-top">
         <b class="card-name">${esc(label(c))}</b>
-        <span class="chip status-chip status-${c.status}">${STATUS[c.status]}</span>
+        <span class="chip state-chip state-${state.key}">${state.text}</span>
       </div>
       ${c.note ? `<div class="card-note">${esc(c.note)}</div>` : ''}
-      <div class="card-bottom">
-        <span class="muted">${units} ${units === 1 ? 'producto' : 'productos'} · ${timeLabel(c.createdAt)} · ${ago(c.createdAt)}</span>
-        <b class="card-total">${money(comandaTotal(c))}</b>
-      </div>
+      <div class="card-bottom muted">${units} ${units === 1 ? 'producto' : 'productos'} · ${timeLabel(c.createdAt)} · ${ago(c.createdAt)}</div>
     </button>`;
 }
 
 export function listView(comandas, actions) {
-  const sorted = [...comandas].sort(
-    (a, b) => (a.status === 'pagada') - (b.status === 'pagada') || new Date(b.createdAt) - new Date(a.createdAt)
-  );
+  const done = (c) => c.items.length > 0 && !pendingCount(c);
+  const sorted = [...comandas].sort((a, b) => done(a) - done(b) || new Date(b.createdAt) - new Date(a.createdAt));
   const root = el(`
     <div class="screen">
       <header class="topbar"><div class="grow"><h1>Gallo Pizzero</h1><small>Comandas</small></div></header>

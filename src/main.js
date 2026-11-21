@@ -1,6 +1,6 @@
 import {
   initComandas, getComandas, getComanda, createComanda, addLine, changeQty,
-  updateLine, removeLine, setStatus, deleteComanda, deleteAll, label,
+  updateLine, removeLine, toggleServed, serveAll, deleteComanda, deleteAll, label,
 } from './comandas.js';
 import { bumpFrecuente } from './store.js';
 import { extrasFor, itemById } from './search.js';
@@ -8,7 +8,7 @@ import { toast, hideToast } from './ui/dom.js';
 import { listView } from './ui/listView.js';
 import { detailView } from './ui/detailView.js';
 import { addView } from './ui/addView.js';
-import { newComandaSheet, priceSheet, lineSheet } from './ui/sheets.js';
+import { newComandaSheet, lineSheet } from './ui/sheets.js';
 
 const app = document.getElementById('app');
 const state = { view: 'list', id: null, category: null, query: '' };
@@ -23,14 +23,20 @@ function navigate(next) {
 }
 
 function add(item, option) {
-  const done = (manualPrice) => {
-    addLine(state.id, item, option, manualPrice);
+  const name = `${item.name}${option.variant ? ` · ${option.variant.name}` : ''}`;
+  try {
+    addLine(state.id, item, option);
     bumpFrecuente(`${item.id}|${option.key}`);
-    render();
-    toast(`+1 ${item.name}${option.variant ? ` · ${option.variant.name}` : ''}`);
-  };
-  if (option.key === 'manual') priceSheet(item, done);
-  else done();
+  } catch (error) {
+    console.error(error);
+    toast(`No se pudo agregar: ${name}`, false);
+    return;
+  }
+  render();
+  toast(`✓ Agregado: ${name}`);
+  const button = app.querySelector(`[data-item="${item.id}"][data-opt="${option.key}"]`);
+  button?.classList.add('added');
+  setTimeout(() => button?.classList.remove('added'), 1200);
 }
 
 function editLine(c, lineId) {
@@ -60,10 +66,10 @@ function render() {
     screen = detailView(c, {
       onBack: () => history.back(),
       onAdd: () => navigate({ view: 'add', category: null }),
-      onStatus: (status) => { setStatus(c.id, status); render(); },
+      onServe: (lineId) => { toggleServed(c.id, lineId); render(); },
+      onServeAll: () => { serveAll(c.id); render(); },
       onQty: (lineId, delta) => { changeQty(c.id, lineId, delta); render(); },
       onEdit: (lineId) => editLine(c, lineId),
-      onPrint: () => window.print(),
       onDelete: () => {
         if (confirm(`¿Eliminar ${label(c)}? No se puede deshacer.`)) {
           deleteComanda(c.id);
