@@ -1,6 +1,6 @@
-// Hojas inferiores: nueva comanda, precio manual y editar renglón.
+// Hojas inferiores: nueva comanda y editar renglón.
 
-import { el, esc, money, hideToast } from './dom.js';
+import { el, esc, hideToast } from './dom.js';
 
 const QUICK_NOTES = ['Sin cebolla', 'Sin picante', 'Para llevar'];
 
@@ -36,26 +36,6 @@ export function newComandaSheet(onCreate) {
   };
 }
 
-export function priceSheet(item, onConfirm) {
-  const { sheet, close } = openSheet(`
-    <form>
-      <h2>${esc(item.name)}</h2>
-      <label>Precio (según existencia)
-        <input name="precio" type="number" inputmode="decimal" min="1" step="any" required placeholder="$">
-      </label>
-      <button class="btn btn-primary btn-xl">Agregar</button>
-    </form>`);
-  const form = sheet.firstElementChild;
-  form.elements.precio.focus();
-  form.onsubmit = (e) => {
-    e.preventDefault();
-    const price = parseFloat(form.elements.precio.value);
-    if (!(price > 0)) return;
-    close();
-    onConfirm(price);
-  };
-}
-
 export function lineSheet(line, extras, onSave, onRemove) {
   let qty = line.qty;
   const picked = new Set(line.extras.map((e) => e.id));
@@ -69,7 +49,7 @@ export function lineSheet(line, extras, onSave, onRemove) {
         extras.length
           ? `<p class="label">Extras</p><div class="chips wrap">${extras
               .map(
-                (x) => `<label class="toggle"><input type="checkbox" value="${x.id}" ${picked.has(x.id) ? 'checked' : ''}><span>${esc(x.name)} +${money(x.price)}</span></label>`
+                (x) => `<label class="toggle"><input type="checkbox" value="${x.id}" ${picked.has(x.id) ? 'checked' : ''}><span>${esc(x.name)}</span></label>`
               )
               .join('')}</div>`
           : ''
@@ -105,6 +85,6 @@ export function lineSheet(line, extras, onSave, onRemove) {
     e.preventDefault();
     const ids = new Set([...form.querySelectorAll('input[type=checkbox]:checked')].map((i) => i.value));
     close();
-    onSave({ qty, note: form.elements.nota.value.trim(), extras: extras.filter((x) => ids.has(x.id)) });
+    onSave({ qty, note: form.elements.nota.value.trim(), extras: extras.filter((x) => ids.has(x.id)).map(({ id, name }) => ({ id, name })) });
   };
 }

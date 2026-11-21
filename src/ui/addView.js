@@ -1,9 +1,9 @@
 // Pantalla 3: agregar productos. Búsqueda arriba, categorías en bloques, precio de un toque.
 
-import { label, comandaTotal, unitCount, countOf } from '../comandas.js';
-import { categories, itemById, searchItems, priceOptions } from '../search.js';
+import { label, unitCount, countOf } from '../comandas.js';
+import { categories, itemById, searchItems, portionOptions } from '../search.js';
 import { loadFrecuentes } from '../store.js';
-import { el, esc, money, optionLabel } from './dom.js';
+import { el, esc, optionLabel } from './dom.js';
 
 const GROUPS = { bebidas: 'Bebidas', comida: 'Comida' };
 
@@ -13,7 +13,7 @@ function frecuentes() {
     .map(([key]) => {
       const [itemId, optKey] = key.split('|');
       const item = itemById(itemId);
-      const option = item && priceOptions(item).find((o) => o.key === optKey);
+      const option = item && portionOptions(item).find((o) => o.key === optKey);
       return option && { item, option };
     })
     .filter(Boolean)
@@ -24,21 +24,26 @@ export function addView(c, state, actions) {
   const category = categories.find((x) => x.id === state.category);
   let query = state.query;
 
+  const inComanda = (item) => {
+    const found = portionOptions(item)
+      .map((o) => ({ o, n: countOf(c, item.id, o.key) }))
+      .filter(({ n }) => n);
+    if (!found.length) return '<p class="added-info">Sin agregar</p>';
+    const detail = found.map(({ o, n }) => (item.variants?.length ? `${n} ${o.variant ? o.variant.name.toLowerCase() : 'vaso'}` : n));
+    return `<p class="added-info yes">✓ En la comanda: ${detail.join(' · ')}</p>`;
+  };
+
   const product = (item, showCategory) => `
     <article class="product">
       <div class="product-info">
         <b>${esc(item.name)}</b>
         ${item.description ? `<small>${esc(item.description)}</small>` : ''}
         ${showCategory ? `<small class="muted">${esc(item.category)}</small>` : ''}
+        ${inComanda(item)}
       </div>
       <div class="product-btns">
-        ${priceOptions(item)
-          .map((o) => {
-            const count = countOf(c, item.id, o.key);
-            return `<button class="price-btn" data-item="${item.id}" data-opt="${o.key}">${esc(optionLabel(o))}${
-              count ? `<span class="badge">${count}</span>` : ''
-            }</button>`;
-          })
+        ${portionOptions(item)
+          .map((o) => `<button class="price-btn" data-item="${item.id}" data-opt="${o.key}"><span class="lbl">${esc(optionLabel(o, item))}</span></button>`)
           .join('')}
       </div>
     </article>`;
@@ -93,7 +98,7 @@ export function addView(c, state, actions) {
       </div>
       <main class="content" data-body></main>
       <footer class="bar">
-        <button class="btn btn-primary btn-block" data-done>Ver comanda${units ? ` · ${units} · ${money(comandaTotal(c))}` : ''}</button>
+        <button class="btn btn-primary btn-block" data-done>Ver comanda${units ? ` · ${units}` : ''}</button>
       </footer>
     </div>`);
 
@@ -114,7 +119,7 @@ export function addView(c, state, actions) {
     const btn = e.target.closest('[data-item]');
     if (!btn) return;
     const item = itemById(btn.dataset.item);
-    actions.onAdd(item, priceOptions(item).find((o) => o.key === btn.dataset.opt));
+    actions.onAdd(item, portionOptions(item).find((o) => o.key === btn.dataset.opt));
   };
   return root;
 }

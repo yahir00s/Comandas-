@@ -1,7 +1,7 @@
 // Menú de Gallo Pizzero (MXN).
 // Fuente: transcripción verificada de las fotos del menú impreso.
 // Las bebidas con precio de vaso y de litro usan `variants`.
-// `priceVariable` pide el precio al agregar el producto.
+// `priceVariable` marca precio según existencia (la app no muestra precios).
 // `group` agrupa las categorías en la pantalla de agregar (bebidas o comida).
 
 export const menuData = {

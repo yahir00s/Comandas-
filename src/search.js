@@ -19,14 +19,11 @@ export function searchItems(query) {
   });
 }
 
-// Cada opción es un botón de un toque: precio base, variante Litro o precio manual.
-export function priceOptions(item) {
-  if (item.priceVariable) return [{ key: 'manual', price: null, variant: null }];
+// Un botón por presentación: la normal (vaso o plato) y Litro si el producto lo tiene.
+export function portionOptions(item) {
   const options = [];
-  if (item.price != null) options.push({ key: 'base', price: item.price, variant: null });
-  for (const variant of item.variants || []) {
-    options.push({ key: variant.name, price: variant.price, variant });
-  }
+  if (item.price != null || !item.variants?.length) options.push({ key: 'base', variant: null });
+  for (const variant of item.variants || []) options.push({ key: variant.name, variant });
   return options;
 }
 

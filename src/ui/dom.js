@@ -3,8 +3,6 @@
 export const esc = (s) =>
   String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
-export const money = (n) => '$' + Number(n).toLocaleString('es-MX', { maximumFractionDigits: 2 });
-
 export function el(html) {
   const template = document.createElement('template');
   template.innerHTML = html.trim();
@@ -23,8 +21,8 @@ export function ago(iso) {
   return `hace ${Math.floor(hours / 24)} d`;
 }
 
-export const optionLabel = (option) =>
-  option.price == null ? 'Poner precio' : `${option.variant ? option.variant.name + ' ' : ''}${money(option.price)}`;
+export const optionLabel = (option, item) =>
+  option.variant ? `+ Agregar ${option.variant.name.toLowerCase()}` : item.variants?.length ? '+ Agregar vaso' : '+ Agregar';
 
 let toastTimer;
 export function hideToast() {
@@ -32,9 +30,10 @@ export function hideToast() {
   document.querySelector('.toast')?.classList.remove('show');
 }
 
-export function toast(message) {
+export function toast(message, ok = true) {
   const node = document.querySelector('.toast') || document.body.appendChild(el('<div class="toast" role="status"></div>'));
   node.textContent = message;
+  node.classList.toggle('error', !ok);
   node.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => node.classList.remove('show'), 1600);
